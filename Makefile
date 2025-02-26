@@ -1,23 +1,31 @@
-#Files
-DEPS = rtleds.py
-EXE = main.py
-
 #RT Target Network Settings
 IPADDR = 10.204.217.29
 USR = admin
 
-#App paths
+#App paths ******************************************
 HOME = /home/admin
+EXE = main.py
+
+# Find all Python files in the directory
+PYTHON_FILES := $(wildcard *.py)
+
 
 #Rules +++++++++++++++++++++++++++++++++++++++++++++++
 
+#Deploy & Execute
+run:
+	cls
+	@make deploy
+	@echo "Running $(EXE) ----------------------"
+	@ssh $(USR)@$(IPADDR) 'python $(EXE)'
+
 #+++ Network actions +++
 
-deploy:
-	@echo "Deploying <$(EXE)> to target <$(IPADDR)>..."
-	@scp -q $(EXE) $(USR)@$(IPADDR):$(HOME)
-	@echo "Deploying <$(DEPS)> to target <$(IPADDR)>..."
-	@scp -q $(DEPS) $(USR)@$(IPADDR):$(HOME)
+#Send every Python file of the project
+.PHONY: deploy
+deploy: $(PYTHON_FILES)
+	@$(foreach file, $(PYTHON_FILES), $(info Deploying -> $(file)))
+	@scp -q $? $(USR)@$(IPADDR):$(HOME)
 	@echo "Deployment completed! ----------------------"
 
 connect:
@@ -30,10 +38,3 @@ cdp:
 	@make deploy --no-print-directory
 	@make connect --no-print-directory
 
-#Deploy & Execute
-run:
-	cls
-	@make deploy
-	@echo "Running $(EXE) ----------------------"
-	@echo ""
-	@ssh $(USR)@$(IPADDR) 'python $(EXE)'
