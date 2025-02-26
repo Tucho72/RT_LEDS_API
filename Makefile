@@ -25,7 +25,15 @@ connect:
 	@ssh -q $(USR)@$(IPADDR)
 
 #Deploy & Connect
-cdeploy:
+cdp:
 	clear
 	@make deploy --no-print-directory
 	@make connect --no-print-directory
+
+#Deploy & Execute
+run:
+	cls
+	@make deploy
+	@echo "Running $(EXE) ----------------------"
+	@echo ""
+	@ssh $(USR)@$(IPADDR) 'python $(EXE)'
