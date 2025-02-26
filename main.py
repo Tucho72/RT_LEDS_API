@@ -1,5 +1,7 @@
-import rtleds
+#import rtleds
+from rtleds import RT_LED
 
 print("running main")
-led1 = MyFunction()
-#rtleds.SearchTarget_LEDs()
+
+MyLED = RT_LED()
+MyLED("user1",4)
