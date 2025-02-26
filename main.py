@@ -1,7 +1,12 @@
-#import rtleds
-from rtleds import RT_LED
+import rtleds
+
 
 print("running main")
 
-MyLED = RT_LED()
-MyLED("user1",1)
+
+usr1 = rtleds.USER2()
+usr1(0)
+usr1(1)
+usr1(2)
+usr1(3)
+

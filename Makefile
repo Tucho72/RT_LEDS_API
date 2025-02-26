@@ -1,5 +1,5 @@
 #RT Target Network Settings
-IPADDR = 10.204.217.29
+IPADDR = 10.204.217.33
 USR = admin
 
 #App paths ******************************************
@@ -26,7 +26,7 @@ run:
 deploy: $(PYTHON_FILES)
 	@$(foreach file, $(PYTHON_FILES), $(info Deploying -> $(file)))
 	@scp -q $? $(USR)@$(IPADDR):$(HOME)
-	@echo Deployment completed! ----------------------
+	@echo Deployment completed $(IPADDR)! ----------------------
 
 connect:
 	@echo Connecting to target <$(IPADDR)>...
