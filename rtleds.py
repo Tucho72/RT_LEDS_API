@@ -7,58 +7,6 @@ API designed to access User LEDs in NI Linux Real-Time devices
 # Importing required module
 import os
 
-def Match1StringPattern(in_text,pattern):
-
-    """
-        Search a single match pattern in the input string,
-        and returns the string splitted before and after the match
-    """
-    parts = in_text.split(pattern,1)
-
-    try:
-        before_match = parts[0]
-    except:
-        before_match = ""
-    
-    try:
-        after_match = parts[1]
-    except:
-        after_match = ""
-
-    return before_match, after_match
-
-def SearchTarget_LEDs():
-    LEDPaths = os.popen('find / -type f -name brightness').read()
-    LEDPaths = LEDPaths.splitlines()
-
-    common_prefix = os.path.commonprefix(LEDPaths)
-
-    ls = []
-    leds = []
-    for pad in LEDPaths:
-        _,af = Match1StringPattern(pad,"nilrt:")
-        led,af = Match1StringPattern(af, ":")
-        option,_ = Match1StringPattern(af,"/")
-        
-        if led in leds:
-            ls[leds.index(led)].append(option)
-        else:
-            ls.append([option])
-            leds.append(led)
-        
-        print(pad)
-
-    LEDS = []
-    print(LEDS)
-    for l,o in zip(leds,ls):
-        LEDS.append((l,o + ["off"]))
-
-    print(LEDS)
-
-    print("\nCommon prefix:", common_prefix)
-
-    return common_prefix
-
 class RT_LED:
     def __init__(self):
         self.leds_path = self._GetLEDsPath()
@@ -66,6 +14,7 @@ class RT_LED:
         self.led = ""
         self.value = 0
 
+    #PRIVATE --------------------------------------------------------
     def _GetLEDsPath(self):
         """
             Search and saves RT LEDs files location in the RT OS
@@ -74,14 +23,19 @@ class RT_LED:
         LEDPaths = LEDPaths.splitlines()
         return os.path.commonprefix(LEDPaths)
 
-    def __call__(self, led,value):
+    def __call__(self, led, value):
+        """
+            Change RT LED status on each isntance call
+        """
         led.lower()
         try:
+            #Validate selected LED and value
             if value == 0:
                 print(f"turned OFF {led} : green & yellow")
             else:
-                path = f"{self.leds_path}{led}:{self.values.get(led, "OFF")}/brightness"
+                path = f"{self.leds_path}{led}:{self.values.get(value, "OFF")}/brightness"
                 print(path)
+            
             # Open the file in read mode
             file = open(path, "r")
             # Read the entire content of the file
@@ -91,15 +45,20 @@ class RT_LED:
             # Close the file
             file.close()
             print("valid LED")
+
+        #Error Handling xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         except:
             if led != "user1" and led != "user2":
                 print(f"Wrong LED selected. Please enter a valid user LED: user1, user2")
-            elif value in range(0,2):
-                print(f"The RT target does not support <{self.values[value]}> color in LED <{led}>")
+            elif value < 0 or value > 2:
+                print(f"Selected value is out of defined colors <{value}>")
+                print("please select a valid color: 0->OFF 1->GREEN 2->YELLOW")
             else:
-                print("Selected value is out of defined colors, please select a valid color: 0->OFF 1->GREEN 2->YELLOW")
-                    
-
+                print(f"The RT target does not support <{self.values[value]}> color in LED <{led}>")
+                
+        #Error Handling xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+           
+    #PUBLIC --------------------------------------------------------
     def count(self):
         self.counter += 1
         return self.counter

@@ -3,12 +3,12 @@ IPADDR = 10.204.217.29
 USR = admin
 
 #App paths ******************************************
+MAKEFLAGS += --no-print-directory
 HOME = /home/admin
 EXE = main.py
 
-# Find all Python files in the directory
+# Find all Python files in current directory
 PYTHON_FILES := $(wildcard *.py)
-
 
 #Rules +++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -16,7 +16,7 @@ PYTHON_FILES := $(wildcard *.py)
 run:
 	cls
 	@make deploy
-	@echo "Running $(EXE) ----------------------"
+	@echo Running $(EXE) ----------------------
 	@ssh $(USR)@$(IPADDR) 'python $(EXE)'
 
 #+++ Network actions +++
@@ -26,15 +26,15 @@ run:
 deploy: $(PYTHON_FILES)
 	@$(foreach file, $(PYTHON_FILES), $(info Deploying -> $(file)))
 	@scp -q $? $(USR)@$(IPADDR):$(HOME)
-	@echo "Deployment completed! ----------------------"
+	@echo Deployment completed! ----------------------
 
 connect:
-	@echo "Connecting to target <$(IPADDR)>..."
+	@echo Connecting to target <$(IPADDR)>...
 	@ssh -q $(USR)@$(IPADDR)
 
 #Deploy & Connect
 cdp:
-	clear
+	cls
 	@make deploy --no-print-directory
 	@make connect --no-print-directory
 
