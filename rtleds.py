@@ -1,5 +1,9 @@
 """
-rtleds 1.0 - Python 3.12.7
+rtleds 1.0 
+    +Developed in Python 3.12.7
+    +tested in Python 3.10.14   ->    Supported
+    +tested in Python 3.10.6    ->     Supported
+    +tested in Python 3.5.5     ->      Supported
 
 API designed to access User LEDs in NI Linux Real-Time devices
 
@@ -38,36 +42,44 @@ class RT_LED:
         #Validate selected LED and value
             try:
                 #Build LED path file
-                path = f'{self.leds_path}{self.led}:{self.values.get(value, "off")}/brightness'                
+                val = self.values.get(value, 0)
+                #path = f'{self.leds_path}{self.led}:{val}/brightness'
+                path = "{}{}:{}/brightness".format(self.leds_path,self.led,val)        
                 # Open and read LED status path 
                 file = open(path, "r")
                 file.close()
             #Error Handling xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
             except:
                 if value < 0 or value > 2:
-                    print(f'Selected value is out of defined colors <{value}>, please select a valid color: 0->OFF 1->GREEN 2->YELLOW')
+                    #print(f'Selected value is out of defined colors <{value}>, please select a valid color: 0->OFF 1->GREEN 2->YELLOW')
+                    print("Selected value is out of defined colors <{}>, please select a valid color: 0->OFF 1->GREEN 2->YELLOW".format(value))
                 else:
-                    print(f'The RT target does not support <{self.values[value]}> color in LED <{self.led}>')
+                    #print(f'The RT target does not support <{self.values[value]}> color in LED <{self.led}>')
+                    print("The RT target does not support <{}> color in LED <{}>".format(self.values[value],self.led))
                 exit()
             #Error Handling xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
     def _ValidateLED(self):
             try:
-                led_path = f'{self.leds_path}{self.led}:green/brightness'
+                #led_path = f'{self.leds_path}{self.led}:green/brightness'
+                led_path = "{}{}:green/brightness".format(self.leds_path,self.led)
                 print(led_path)
                 file = open(led_path, "r")
                 file.read()
                 file.close()
             except:
-                print(f'This RT target does not support LED <{self.led}>')
+                #print(f'This RT target does not support LED <{self.led}>')
+                print("This RT target does not support LED <{}>".format(self.led))
                 exit()
             # This method should be implemented by subclasses
             #raise NotImplementedError("Subclasses must implement this method")
     
     def _TurnOFF(self):
         #Build Green input LED path file
-        g_path = f'{self.leds_path}{self.led}:green/brightness'
-        y_path = f'{self.leds_path}{self.led}:yellow/brightness'
+        #g_path = f'{self.leds_path}{self.led}:green/brightness'
+        #y_path = f'{self.leds_path}{self.led}:yellow/brightness'
+        g_path = "{}{}:green/brightness".format(self.leds_path,self.led)
+        y_path = "{}{}:yellow/brightness".format(self.leds_path,self.led)
         leds = [g_path, y_path]
         #Turn OFF green and yellow colors of selected LED
         for led_path in leds:
@@ -83,7 +95,8 @@ class RT_LED:
         print("Changing value")
         self._ValidateValue(value)
 
-        led_path = f'{self.leds_path}{self.led}:{self.values[value]}/brightness'
+        #led_path = f'{self.leds_path}{self.led}:{self.values[value]}/brightness'
+        led_path = "{}{}:{}/brightness".format(self.leds_path,self.led,self.values[value])
         print(led_path)
         file = open(led_path, "w")
         file.write("1")
