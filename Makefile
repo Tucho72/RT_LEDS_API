@@ -1,5 +1,5 @@
 #RT Target Network Settings
-IPADDR = 10.204.217.29
+IPADDR = 10.204.217.22
 USR = admin
 
 #App paths ******************************************

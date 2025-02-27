@@ -49,11 +49,17 @@ class RT_LED:
 
     def _ValidateValue(self, value):
         #Validate selected LED and value
+            #Build LED path file
+            val = self.values.get(value, "0")
             try:
-                #Build LED path file
-                val = self.values.get(value, 0)
-                #path = f'{self.leds_path}{self.led}:{val}/brightness'
-                path = "{}{}:{}/brightness".format(self.leds_path,self.led,val)        
+                #Verify whether class is for PXIe or RIO device
+                if isinstance(self, PXIe_user1) or isinstance(self, PXIe_user2):
+                    #path = f'{self.leds_path}{self.led}:{val}/brightness'
+                    path = "{}{}:{}/brightness".format(self.leds_path,val,self.led)
+                else:
+                    #path = f'{self.leds_path}{self.led}:{val}/brightness'
+                    path = "{}{}:{}/brightness".format(self.leds_path,self.led,val)        
+                #print(path)
                 # Open and read LED status path 
                 file = open(path, "r")
                 file.close()
@@ -70,12 +76,13 @@ class RT_LED:
 
     def _ValidateLED(self):
             try:
+                #Verify whether class is for PXIe or RIO device
                 if isinstance(self, PXIe_user1) or isinstance(self, PXIe_user2):
                     #led_path = f'{self.leds_path}{self.led}:green/brightness'
                     led_path = "{}green:{}/brightness".format(self.leds_path,self.led)
-                    print("This is PXIe LED")
+                    #print("This is PXIe LED")
                 else:
-                    print("This is RIO dev LED")
+                    #print("This is RIO dev LED")
                     #led_path = f'{self.leds_path}{self.led}:green/brightness'
                     led_path = "{}{}:green/brightness".format(self.leds_path,self.led)
                 #print(led_path)
@@ -107,11 +114,15 @@ class RT_LED:
                 pass
             
     def _ChangeStatus(self, value):
-        print("Changing value")
+        #print("Changing value")
         self._ValidateValue(value)
-
-        #led_path = f'{self.leds_path}{self.led}:{self.values[value]}/brightness'
-        led_path = "{}{}:{}/brightness".format(self.leds_path,self.led,self.values[value])
+        #Verify whether class is for PXIe or RIO device
+        if isinstance(self, PXIe_user1) or isinstance(self, PXIe_user2):
+            #led_path = f'{self.leds_path}{self.led}:{self.values[value]}/brightness'
+            led_path = "{}{}:{}/brightness".format(self.leds_path,self.values[value],self.led)
+        else:
+            #led_path = f'{self.leds_path}{self.led}:{self.values[value]}/brightness'
+            led_path = "{}{}:{}/brightness".format(self.leds_path,self.led,self.values[value])
         #print(led_path)
         file = open(led_path, "w")
         file.write("1")
