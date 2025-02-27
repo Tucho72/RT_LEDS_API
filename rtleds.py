@@ -43,7 +43,7 @@ class RT_LED:
             Search and saves RT LEDs files location in the RT OS
         """
         #Look for brightness files related to RT target LEDs
-        BrightnessPath = os.popen('find / -type f -name brightness').read()
+        BrightnessPath = os.popen('find /sys/devices -type f -name brightness').read()
         BrightnessPath = BrightnessPath.splitlines()
         #Return common directory of user LEDs 
         LEDsPath = []
