@@ -20,6 +20,9 @@ import os
 class RT_LED:
 
     def __init__(self):
+        """
+            Initialize LED class attributes
+        """
         self.values = {0:"off",1:"green",2:"yellow"}
         self.value = 0
         self.led = ""
@@ -39,8 +42,10 @@ class RT_LED:
         """
             Search and saves RT LEDs files location in the RT OS
         """
+        #Look for brightness files related to RT target LEDs
         BrightnessPath = os.popen('find / -type f -name brightness').read()
         BrightnessPath = BrightnessPath.splitlines()
+        #Return common directory of user LEDs 
         LEDsPath = []
         for pad in BrightnessPath:
             if pad.find("leds/nilrt:") != -1:
@@ -48,62 +53,67 @@ class RT_LED:
         return os.path.commonprefix(LEDsPath)
 
     def _ValidateValue(self, value):
-        #Validate selected LED and value
-            #Build LED path file
-            val = self.values.get(value, "0")
-            try:
-                #Verify whether class is for PXIe or RIO device
-                if isinstance(self, PXIe_user1) or isinstance(self, PXIe_user2):
-                    #path = f'{self.leds_path}{self.led}:{val}/brightness'
-                    path = "{}{}:{}/brightness".format(self.leds_path,val,self.led)
-                else:
-                    #path = f'{self.leds_path}{self.led}:{val}/brightness'
-                    path = "{}{}:{}/brightness".format(self.leds_path,self.led,val)        
-                #print(path)
-                # Open and read LED status path 
-                file = open(path, "r")
-                file.close()
-            #Error Handling xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-            except:
-                if value < 0 or value > 2:
-                    #print(f'Selected value is out of defined colors <{value}>, please select a valid color: 0->OFF 1->GREEN 2->YELLOW')
-                    print("Selected value is out of defined colors <{}>, please select a valid color: 0->OFF 1->GREEN 2->YELLOW".format(value))
-                else:
-                    #print(f'The RT target does not support <{self.values[value]}> color in LED <{self.led}>')
-                    print("The RT target does not support <{}> color in LED <{}>".format(self.values[value],self.led))
-                exit()
-            #Error Handling xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        """
+            Validates input value is supported on RT target
+        """
+        val = self.values.get(value, "0")
+        try:
+            if isinstance(self, PXIe_user1) or isinstance(self, PXIe_user2):
+                #Build path for PXIe targets
+                path = "{}{}:{}/brightness".format(self.leds_path,val,self.led)
+            else:
+                #Build path for RIO targets
+                path = "{}{}:{}/brightness".format(self.leds_path,self.led,val)        
+            #Read file to validate correct LED color
+            file = open(path, "r")
+            file.close()
+        #Error Handling xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        except:
+            if value < 0 or value > 2:
+                #print(f'Selected value is out of defined colors <{value}>, please select a valid color: 0->OFF 1->GREEN 2->YELLOW')
+                print("Selected value is out of defined colors <{}>, please select a valid color: 0->OFF 1->GREEN 2->YELLOW".format(value))
+            else:
+                #print(f'The RT target does not support <{self.values[value]}> color in LED <{self.led}>')
+                print("The RT target does not support <{}> color in LED <{}>".format(self.values[value],self.led))
+            exit()
+        #xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
     def _ValidateLED(self):
             try:
-                #Verify whether class is for PXIe or RIO device
+                """
+                    Verify whether class is for PXIe or RIO device
+                """
                 if isinstance(self, PXIe_user1) or isinstance(self, PXIe_user2):
-                    #led_path = f'{self.leds_path}{self.led}:green/brightness'
+                    #Build path file for PXIe targets
                     led_path = "{}green:{}/brightness".format(self.leds_path,self.led)
-                    #print("This is PXIe LED")
                 else:
-                    #print("This is RIO dev LED")
-                    #led_path = f'{self.leds_path}{self.led}:green/brightness'
+                    #Build path for RIO targets
                     led_path = "{}{}:green/brightness".format(self.leds_path,self.led)
-                #print(led_path)
+                #Read file to validate correct LED color
                 file = open(led_path, "r")
                 file.read()
                 file.close()
+            #Error Handling xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
             except:
-                #print(f'This RT target does not support LED <{self.led}>')
                 print("This RT target does not support LED <{}>".format(self.led))
                 exit()
-            # This method should be implemented by subclasses
-            #raise NotImplementedError("Subclasses must implement this method")
+            #xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     
     def _TurnOFF(self):
-        #Build Green input LED path file
-        #g_path = f'{self.leds_path}{self.led}:green/brightness'
-        #y_path = f'{self.leds_path}{self.led}:yellow/brightness'
-        g_path = "{}{}:green/brightness".format(self.leds_path,self.led)
-        y_path = "{}{}:yellow/brightness".format(self.leds_path,self.led)
-        leds = [g_path, y_path]
+        """
+            Turns off both GREEN and YELLOW values of selected LED
+        """
+        if isinstance(self, PXIe_user1) or isinstance(self, PXIe_user2):
+            #Build path for PXIe targets
+            g_path = "{}green:{}/brightness".format(self.leds_path,self.led)
+            y_path = "{}yellow:{}/brightness".format(self.leds_path,self.led)
+        else:
+            #Build path for RIO targets
+            g_path = "{}{}:green/brightness".format(self.leds_path,self.led)
+            y_path = "{}{}:yellow/brightness".format(self.leds_path,self.led)
+        
         #Turn OFF green and yellow colors of selected LED
+        leds = [g_path, y_path]
         for led_path in leds:
             try:
                 #print(led_path)
@@ -114,14 +124,16 @@ class RT_LED:
                 pass
             
     def _ChangeStatus(self, value):
-        #print("Changing value")
+        """
+            Updates selected LED status: OFF GREEN YELLOW
+        """
+        #Validate input LED color value
         self._ValidateValue(value)
-        #Verify whether class is for PXIe or RIO device
         if isinstance(self, PXIe_user1) or isinstance(self, PXIe_user2):
-            #led_path = f'{self.leds_path}{self.led}:{self.values[value]}/brightness'
+            #Build path for PXIe targets
             led_path = "{}{}:{}/brightness".format(self.leds_path,self.values[value],self.led)
         else:
-            #led_path = f'{self.leds_path}{self.led}:{self.values[value]}/brightness'
+            #Build path for RIO targets
             led_path = "{}{}:{}/brightness".format(self.leds_path,self.led,self.values[value])
         #print(led_path)
         file = open(led_path, "w")
