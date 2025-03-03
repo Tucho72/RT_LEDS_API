@@ -17,7 +17,7 @@ run:
 	cls
 	@make deploy
 	@echo Running $(EXE) ----------------------
-	@ssh $(USR)@$(IPADDR) 'python $(EXE)'
+	@ssh -t $(USR)@$(IPADDR) 'python $(EXE)'
 
 #+++ Network actions +++
 
@@ -29,7 +29,7 @@ deploy: $(PYTHON_FILES)
 	@echo Deployment completed $(IPADDR)! ----------------------
 
 connect:
-	@echo Connecting to target <$(IPADDR)>...
+	@echo "Connecting to target <$(IPADDR)>..."
 	@ssh -q $(USR)@$(IPADDR)
 
 #Deploy & Connect
