@@ -1,16 +1,7 @@
 """
 rtleds 1.0 
 
-API designed to access User LEDs in NI Linux Real-Time devices
-    +Developed in Python 3.12.7 ->  Supported
-    +tested in Python 3.10.14   ->  Supported
-    +tested in Python 3.10.6    ->  Supported
-    +tested in Python 3.5.5     ->  Supported
-
-
-Supported models: cRIO-903X/904X/905X/906X, SbRIO-962X, RT PXIe controllers (only tested in PXIe-8880), RT cDAQ controllers (only tested in cDAQ-9134)
-Not supported models: RoboRIO(1&2), MyRIO-1900/1950, ELVIS(I,II,III), cRIO-902X/907X/908X
-Not tested models: SbRIO-9656/963X/960X, rest of RT PXIe controllers, rest of RT cDAQ-913X controllers
+David Vilchis 
 
 """
 # Importing required module
@@ -26,7 +17,7 @@ def PrintTargetLEDs():
     #Get LEDs common path
     common_path = os.path.commonprefix(LEDs)
     #Filter RT target user LEDs
-    userLEDs = {"user1":['OFF'], "user2":['OFF']}
+    userLEDs = {"user0":['OFF'], "user1":['OFF'], "user2":['OFF']}
     colors = ["red","green","yellow"]
     #Search user match in path
     for key in userLEDs.keys():
@@ -44,7 +35,7 @@ def PrintTargetLEDs():
             print("{} >> {}".format(key,userLEDs[key]))
         else:
             c += 1
-    if c == 2:
+    if c == 3:
         print("This target does not support User LEDs")
     
 # USER LEDs CLASS ******************************************************
