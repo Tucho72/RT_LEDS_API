@@ -1,2 +1,4 @@
 Makefile
 main.py
+*.pyc
+__pycache__/
