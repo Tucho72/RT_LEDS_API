@@ -4,7 +4,7 @@ rtleds 1.0
 David Vilchis 
 
 """
-# Importing required module
+# Importing required modules
 from sys import exit
 import os
 

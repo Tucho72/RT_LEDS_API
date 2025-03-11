@@ -1,8 +1,6 @@
 import rtleds
 import time
 
-print("running main")
-
 """ This example turns toggles the user1 LED of a cRIO-9054 """
 
 #Print available user LEDs in cRIO-9054

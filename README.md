@@ -86,7 +86,7 @@ The example below turns ON and then OFF the `user2` LED `yellow` of a PXIe-8880.
 import rtleds
 #Create user2 LED instance
 usrled = rtleds.PXIe_user2()
-#Turn ON Green user2 LED
+#Turn ON yellow user2 LED
 usrled(2)
 #Turn OFF user2 LED
 usrled(0)
