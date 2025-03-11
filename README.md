@@ -34,7 +34,7 @@ Python API designed to access User LEDs in NI Linux Real-Time (RT) devices.
 - Smart Camera NI-17XX
 - Monochrome/Color Smart Camera ISC-178X
 
-> Note: If you do not see your NI Linux RT Controller you can review the [Real-Time Controllers and Real-Time Operating System Compatibility][NI-Linux-RT-OS-Compatibility] to confirm compatibility.
+> Note: Only NI Linux RT controllers (Intelx64 and ARM based) support this API, you can take a look at [Real-Time Controllers and Real-Time Operating System Compatibility][NI-Linux-RT-OS-Compatibility] to confirm compatibility.
 
 # Using the API
 
