@@ -26,7 +26,7 @@ def PrintTargetLEDs():
     #Get LEDs common path
     common_path = os.path.commonprefix(LEDs)
     #Filter RT target user LEDs
-    userLEDs = {"user0":['OFF'],"user1":['OFF'], "user2":['OFF'], "user3":['OFF']}
+    userLEDs = {"user1":['OFF'], "user2":['OFF']}
     colors = ["red","green","yellow"]
     #Search user match in path
     for key in userLEDs.keys():
@@ -37,11 +37,16 @@ def PrintTargetLEDs():
                     if color in path:
                         userLEDs[key].append(color)
                         break
-    #Print Results          
+    #Print Results
+    c = 0          
     for key in userLEDs.keys():
         if len(userLEDs[key]) > 1:
             print("{} >> {}".format(key,userLEDs[key]))
-
+        else:
+            c += 1
+    if c == 2:
+        print("This target does not support User LEDs")
+    
 # USER LEDs CLASS ******************************************************
 
 class RT_LED:
