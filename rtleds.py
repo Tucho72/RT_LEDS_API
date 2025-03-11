@@ -17,6 +17,33 @@ Not tested models: SbRIO-9656/963X/960X, rest of RT PXIe controllers, rest of RT
 from sys import exit
 import os
 
+#Print available user LEDs in current NI Linux RT device ***************
+
+def PrintTargetLEDs():
+    #Search LEDs brightness files
+    LEDs = os.popen('find /sys/devices -type f -name brightness | grep -i leds/nilrt:').read()
+    LEDs = LEDs.splitlines()
+    #Get LEDs common path
+    common_path = os.path.commonprefix(LEDs)
+    #Filter RT target user LEDs
+    userLEDs = {"user0":['OFF'],"user1":['OFF'], "user2":['OFF'], "user3":['OFF']}
+    colors = ["red","green","yellow"]
+    #Search user match in path
+    for key in userLEDs.keys():
+        #Search color match in path
+        for path in LEDs:
+            if key in path:
+                for color in colors:
+                    if color in path:
+                        userLEDs[key].append(color)
+                        break
+    #Print Results          
+    for key in userLEDs.keys():
+        if len(userLEDs[key]) > 1:
+            print("{} >> {}".format(key,userLEDs[key]))
+
+# USER LEDs CLASS ******************************************************
+
 class RT_LED:
 
     def __init__(self):
@@ -38,6 +65,7 @@ class RT_LED:
             self._ChangeStatus(value)
 
     #PRIVATE --------------------------------------------------------
+
     def _GetLEDsPath(self):
         """
             Search and saves RT LEDs files location in the RT OS
