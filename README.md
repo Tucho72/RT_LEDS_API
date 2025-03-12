@@ -1,5 +1,5 @@
 # rtleds 1.0
-Python API designed to access User LEDs in NI Linux Real-Time (RT) devices.
+Accessing and controlling the user LEDs in your NI Linux Real-Time controllers was only a function available in LabVIEW Real-Time with the `RT LEDs.vi` VI. But now you can make use of this Python API to access the same way to these user LEDs.
 
 ### Supported Python versions
 - Developed in Python 3.12.7 ->  Supported
