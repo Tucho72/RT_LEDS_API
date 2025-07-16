@@ -97,6 +97,8 @@ usrled(0)
 
 [NI-Linux-RT-OS-Compatibility]: <https://www.ni.com/en/support/documentation/compatibility/17/real-time-controllers-and-real-time-operating-system-compatibili.html>
 
+## License
 
+This software is available under the following licenses:
 
-
+  * MIT
