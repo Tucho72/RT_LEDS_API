@@ -10,7 +10,6 @@ rtleds.PrintTargetLEDs()
 usrled = rtleds.RIO_user1()
 
 for i in range(0,5):
-    
     usrled(1)
     time.sleep(0.2)
     print("LED ON")
